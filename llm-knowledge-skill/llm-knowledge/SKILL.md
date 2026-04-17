@@ -71,11 +71,11 @@ L3: Topic（主题）     → 概念页文件名，不建目录
 │   └── log.md                      ← 操作日志
 │
 ├── atlas/                          ← 人类阅读层（Obsidian 可视化浏览）
-│   ├── overview.canvas             ← 全库鸟瞰图（L1 节点）
+│   ├── overview.canvas             ← 全库鸟瞰图（L1 节点，text 类型）
 │   ├── <L1>/
-│   │   ├── _map.canvas             ← 领域总图（L2 节点）
+│   │   ├── _map.canvas             ← 领域总图（L2 节点，text 类型）
 │   │   └── <L2>/
-│   │       ├── _map.canvas         ← 分类地图（topic 节点，链接 wiki 页）
+│   │       ├── _map.canvas         ← 分类地图（概念节点用 file 类型，可跳转 wiki 页）
 │   │       └── <concept>.excalidraw
 │   └── ...
 │
@@ -93,7 +93,19 @@ L3: Topic（主题）     → 概念页文件名，不建目录
 | 新增 L1/L2（或执行 Map 操作） | 生成或更新对应 `_map.canvas` | `@obsidian-canvas-creator` |
 | 用户明确要求「画图 / 思维导图」 | 按类型选择对应 skill | 三选一 |
 
-**Canvas 节点规范**：每个概念节点的 `file` 字段指向对应 wiki 路径，Obsidian 内点击直接跳转。
+**Canvas 节点规范**：
+
+| 场景 | 节点类型 | 说明 |
+|---|---|---|
+| 有内容的概念页 | `type: "file"`, `file` 指向 wiki .md 路径 | 节点内预览内容，右上角箭头图标跳转到完整页面 |
+| 待填充的概念 | `type: "text"` | 标题 + _(coming soon)_，有内容后改为 file 类型 |
+| Canvas 间导航 | 不使用 Canvas 跳转 | 用 Obsidian 左侧文件树在不同 Canvas 间切换 |
+
+**注意事项**：
+- `type: "file"` 节点会自动扩展显示完整内容预览，这是预期行为——在知识图谱上直接浏览概要
+- 布局时预留足够间距，避免多个 file 节点内容重叠
+- **禁止** `type: "file"` 指向 .canvas 文件（会显示 JSON 原文）
+- **禁止** `type: "text"` 中使用 `[[wikilink]]` 做跳转（Canvas 中不可点击，且会导致 Obsidian 自动创建垃圾文件）
 
 ---
 
