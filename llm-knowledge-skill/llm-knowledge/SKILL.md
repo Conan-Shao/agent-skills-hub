@@ -3,8 +3,8 @@
 ## 用途
 构建和维护个人知识库。知识库跟人走，不跟角色或项目走。
 采用双层架构：
-- **wiki/** — AI 查询层（平铺 Markdown，token 友好）
-- **atlas/** — 人类阅读层（Obsidian Canvas / Excalidraw / Mermaid）
+- **wiki/** — AI 查询层（Obsidian Flavored Markdown，token 友好）
+- **atlas/** — 人类阅读层（Canvas / Excalidraw / Mermaid / Bases 数据视图）
 
 ---
 
@@ -16,6 +16,7 @@
 4. **直接文件操作**：Agent 直接写入 Obsidian vault 目录（Claude Code 用 Write 工具，其他 Agent 用对应文件操作能力）
 5. **视觉驱动理解**：流程 → Mermaid；概念关系 → Excalidraw；领域全貌 → Canvas
 6. **Schema 驱动**：CLAUDE.md 配置语言风格、domain 树、视觉触发规则
+7. **Obsidian 原生语法**：概念页使用 Obsidian Flavored Markdown（callouts、highlights、wikilinks）
 
 ---
 
@@ -72,6 +73,7 @@ L3: Topic（主题）     → 概念页文件名，不建目录
 │
 ├── atlas/                          ← 人类阅读层（Obsidian 可视化浏览）
 │   ├── overview.canvas             ← 全库鸟瞰图（L1 节点，text 类型）
+│   ├── dashboard.base              ← Obsidian Bases 数据视图（按 domain/tags/日期 动态过滤）
 │   ├── <L1>/
 │   │   ├── _map.canvas             ← 领域总图（L2 节点，text 类型）
 │   │   └── <L2>/
@@ -79,7 +81,8 @@ L3: Topic（主题）     → 概念页文件名，不建目录
 │   │       └── <concept>.excalidraw
 │   └── ...
 │
-└── output/                         ← 查询结果输出
+└── output/                         ← 查询结果 + 备考产物
+    └── progress/                   ← 学习掌握度追踪（仅 study 模式）
 ```
 
 ---
@@ -148,6 +151,7 @@ L3: Topic（主题）     → 概念页文件名，不建目录
 
 **C. 写 wiki/**：
 - 按 `{{concept_format}}` 新建或更新 wiki/concepts/<L1>/<L2>/<topic>.md
+- 使用 Obsidian Markdown 增强格式（参见下方「Obsidian Markdown 规范」）
 - 若有流程/步骤 → 调用 `@mermaid-visualizer`，嵌入 mermaid 代码块
 - 更新 wiki/entities/（如有实体）
 - 更新 wiki/index.md 和 wiki/log.md
@@ -175,10 +179,11 @@ L3: Topic（主题）     → 概念页文件名，不建目录
 **触发**：「lint」/ 「health check」
 
 1. 扫描 wiki/ 全部文件：矛盾、孤立页、缺失反链、过时内容
-2. 检查 atlas/ Canvas 节点是否都有对应 wiki 页（清理无效链接）
-3. 验证 CLAUDE.md domain 树与实际目录结构一致
-4. 自动修复可确定问题，列出需人工确认的矛盾
-5. 追加 log.md
+2. 检查 `[[wikilinks]]`：所有链接目标文件是否存在，不存在则报告（防止 Obsidian 自动创建垃圾文件）
+3. 检查 atlas/ Canvas 节点是否都有对应 wiki 页（清理无效链接）
+4. 验证 CLAUDE.md domain 树与实际目录结构一致
+5. 自动修复可确定问题，列出需人工确认的矛盾
+6. 追加 log.md
 
 ---
 
@@ -213,8 +218,18 @@ L3: Topic（主题）     → 概念页文件名，不建目录
 2. 按重要程度 × 完整度排序 → Priority Revision List
 3. 调用 `@obsidian-canvas-creator` 生成备考 Canvas（高优先级节点高亮）
 4. 生成 Marp 复习卡片（正面问题 / 背面答案+记忆技巧）
-5. 生成 5 道模拟题（3 选择 + 2 简答）附解析
+5. 生成模拟题（4 种题型混合）：
+   - 选择题（Multiple Choice）— 4 选 1，考核概念辨析
+   - 填空题（Fill in the Blank）— 考核关键术语记忆
+   - 匹配题（Matching）— 考核概念间关系
+   - 简答题（Short Answer）— 考核理解和应用
 6. 写入 output/exam-<subject>-<date>/
+7. 更新掌握度记录 output/progress/<subject>-mastery.md
+
+**掌握度追踪**（交互模式）：
+- 测验后按概念评估掌握度：🟥 weak / 🟨 fair / 🟩 good / 🟦 mastered / ⬜ unmeasured
+- 下次备考时优先出 🟥🟨 概念的题目
+- 掌握度数据存 output/progress/，不污染 wiki/ 层的知识内容
 
 ---
 
@@ -237,6 +252,47 @@ visual:
 
 ---
 
+## Obsidian Markdown 规范
+
+概念页使用 Obsidian Flavored Markdown（需安装 `@obsidian-markdown` skill 或遵循以下内联规范）：
+
+**Callouts** — 标注重要内容：
+```markdown
+> [!important] Exam Tip
+> 这是考试高频考点
+
+> [!warning] Common Mistake
+> 学生常见错误
+```
+
+**Highlights** — 标注关键术语：`==关键术语==` 在 Obsidian 中显示为高亮
+
+**Wikilinks** — 概念间互相引用：
+- `[[concept-name]]` 链接到同 vault 内的其他概念页
+- **仅链接已存在的页面**，Lint 操作会检查链接有效性
+- 正文中用 wikilink 引用 related 概念，与 frontmatter `related: []` 互补
+
+**Embeds** — 嵌入其他文件内容：
+- `![[concept-name#Section]]` 嵌入另一个概念页的特定章节
+
+---
+
+## 依赖 Skills
+
+| Skill | 作用 | 必须 | 降级策略 |
+|---|---|---|---|
+| `@obsidian-markdown` | Markdown 语法规范 | 推荐 | 按上方内联规范手写 |
+| `@obsidian-canvas-creator` | 生成 _map.canvas | 推荐 | 按 Canvas JSON 格式手写 |
+| `@excalidraw-diagram` | 生成 .excalidraw 概念关系图 | 推荐 | 跳过，仅保留 wiki 文字 |
+| `@mermaid-visualizer` | 生成 mermaid 代码块 | 推荐 | 手写 mermaid 语法 |
+| `@obsidian-bases` | 生成 dashboard.base 数据视图 | 可选 | 不影响核心功能 |
+
+**优先级**：wiki 文字内容 > mermaid 嵌入 > canvas 更新 > excalidraw 生成 > bases 视图
+
+非 Claude Code 环境（OpenClawd 等）无法调用 @skill 时，按降级策略执行。核心规范已内联在本文件中，不依赖外部 skill 文件。
+
+---
+
 ## 可扩展占位符（由 CLAUDE.md 覆盖）
 
 | 占位符 | 默认值 | 说明 |
@@ -251,6 +307,7 @@ visual:
 ## 错误处理
 
 - 数据源无法访问 → 报告，跳过，不中断
-- Axton skill 调用失败 → 跳过可视化，继续写 wiki 文字，log.md 追加提示
+- @skill 调用失败 → 按优先级降级：跳过可视化，继续写 wiki 文字，log.md 追加提示
 - raw 文件过大 → 自动分段，每段生成独立页面并互链
 - 摄入内容不属于已有 domain → 建议新增分类，确认后执行 Domain 操作
+- wikilink 目标不存在 → Ingest 时不创建链接，Lint 时报告并建议修复

@@ -57,14 +57,30 @@ You can add or reorganize domains anytime by talking to Claude.
 
 ## Quick Start
 
-### Step 1: Install Visual Skills (required)
+### Step 1: Install Dependency Skills
 
+**Visual Skills (recommended):**
 ```bash
 git clone https://github.com/axtonliu/axton-obsidian-visual-skills.git
 cp -r axton-obsidian-visual-skills/excalidraw-diagram ~/.claude/skills/
 cp -r axton-obsidian-visual-skills/mermaid-visualizer ~/.claude/skills/
 cp -r axton-obsidian-visual-skills/obsidian-canvas-creator ~/.claude/skills/
 ```
+
+**Obsidian Markdown & Bases (recommended):**
+```bash
+git clone https://github.com/kepano/obsidian-skills.git
+cp -r obsidian-skills/skills/obsidian-markdown ~/.claude/skills/
+cp -r obsidian-skills/skills/obsidian-bases ~/.claude/skills/
+```
+
+**Tutor Skills (optional, for study mode):**
+```bash
+git clone https://github.com/bevibing/tutor-skills.git
+cp -r tutor-skills/skills/tutor ~/.claude/skills/
+```
+
+> All dependency skills are **recommended but not required**. The core SKILL.md includes inline specs for all formats, so the knowledge base works without any external skills installed.
 
 ### Step 2: Install This Skill
 
@@ -99,7 +115,7 @@ Templates are just starting points. After copying, open Claude Code and customiz
 
 In Obsidian: **Open folder as vault** → select your knowledge base directory.
 
-Install Obsidian plugins: **Excalidraw** (Canvas is built-in).
+Install Obsidian plugins: **Excalidraw** (Canvas and Bases are built-in since Obsidian 1.8+).
 
 ### Step 5: Initialize and Start Using
 
@@ -186,13 +202,23 @@ llm-knowledge-skill/
 
 ## Dependencies
 
-| Feature | Dependency | Required |
+### Claude Code Skills
+
+| Skill | Source | Required | Fallback |
+|---|---|---|---|
+| obsidian-canvas-creator | [axtonliu/axton-obsidian-visual-skills](https://github.com/axtonliu/axton-obsidian-visual-skills) | Recommended | Hand-write Canvas JSON |
+| excalidraw-diagram | [axtonliu/axton-obsidian-visual-skills](https://github.com/axtonliu/axton-obsidian-visual-skills) | Recommended | Skip, wiki text only |
+| mermaid-visualizer | [axtonliu/axton-obsidian-visual-skills](https://github.com/axtonliu/axton-obsidian-visual-skills) | Recommended | Hand-write mermaid syntax |
+| obsidian-markdown | [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) | Recommended | Follow inline spec in SKILL.md |
+| obsidian-bases | [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) | Optional | No dashboard.base, use index.md |
+| tutor | [bevibing/tutor-skills](https://github.com/bevibing/tutor-skills) | Optional | Built-in Exam mode (no interactive tracking) |
+
+### Runtime Tools
+
+| Feature | Tool | Required |
 |---|---|---|
 | File read/write | Claude Code built-in | Yes |
 | Web ingestion | Claude Code built-in web_fetch | Yes |
-| Canvas mind maps | Axton obsidian-canvas-creator | Yes |
-| Excalidraw diagrams | Axton excalidraw-diagram | Yes |
-| Mermaid flowcharts | Axton mermaid-visualizer | Yes |
 | Obsidian visualization | Obsidian + Excalidraw plugin | Yes (human layer) |
 | GitHub repo ingestion | GitHub MCP | Optional |
 | PDF text extraction | pdftotext / pymupdf | Optional |
@@ -206,3 +232,5 @@ llm-knowledge-skill/
 
 - Methodology: Andrej Karpathy, LLM Wiki (2026-04-03)
 - Visual Skills: [axtonliu/axton-obsidian-visual-skills](https://github.com/axtonliu/axton-obsidian-visual-skills)
+- Obsidian Skills: [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills)
+- Tutor Skills: [bevibing/tutor-skills](https://github.com/bevibing/tutor-skills)
