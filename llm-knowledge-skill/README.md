@@ -115,7 +115,7 @@ Templates are just starting points. After copying, open Claude Code and customiz
 
 In Obsidian: **Open folder as vault** → select your knowledge base directory.
 
-Install Obsidian plugins: **Excalidraw** (Canvas and Bases are built-in since Obsidian 1.8+).
+Install the required plugins (see the [Obsidian Plugins](#obsidian-plugins) section below for full details). TL;DR: install the **Excalidraw** community plugin — without it, `.excalidraw` files display as raw JSON.
 
 ### Step 5: Initialize and Start Using
 
@@ -165,7 +165,7 @@ External `@skill` calls (e.g. `@obsidian-canvas-creator`) won't work outside Cla
 
 ### Step 4: Set Up Obsidian
 
-Same as Claude Code: open the knowledge base folder as an Obsidian vault, install the Excalidraw plugin.
+Same as Claude Code: open the knowledge base folder as an Obsidian vault and install the plugins described in the [Obsidian Plugins](#obsidian-plugins) section.
 
 ### Step 5: Initialize and Start Using
 
@@ -247,6 +247,75 @@ llm-knowledge-skill/
 
 ---
 
+## Obsidian Plugins
+
+The `atlas/` layer produces files that Obsidian renders through plugins. Without them, some files display as raw JSON or plain text.
+
+### Enable Community Plugins First
+
+Community plugins are disabled by default (Obsidian's **Restricted Mode / 安全模式**). You need to turn it off before any community plugin can be installed:
+
+1. Obsidian → **Settings (⚙️)** → **Community plugins**
+2. Click **Turn on community plugins** (or **Turn off Restricted Mode** on newer versions)
+3. A security warning appears — confirm to proceed
+4. The **Browse** button becomes active → you can now reach the community plugin marketplace
+
+### Required
+
+**Excalidraw** (community plugin by Zsolt Viczián)
+
+Required to render `.excalidraw` files (concept relationship diagrams, visual periodic tables, etc.). Without it, `.excalidraw` files show as raw JSON.
+
+Install:
+1. **Community plugins** → **Browse** → search `Excalidraw` → **Install** → **Enable**
+2. (Optional, recommended) Command palette → `Excalidraw: Convert *.excalidraw files to *.excalidraw.md` — wraps files in markdown containers so wikilinks, frontmatter, and search work.
+
+Fallback if you can't install it: open [excalidraw.com](https://excalidraw.com), use **Open** to load the `.excalidraw` file. Read-only browsing only — no Obsidian cross-linking.
+
+### Built-in (no install needed)
+
+| Plugin | Status | What it renders |
+|---|---|---|
+| **Canvas** | Core plugin (Obsidian 1.1+), enabled by default | `.canvas` files — `_map.canvas` domain maps, `overview.canvas` |
+| **Bases** | Core plugin (Obsidian 1.9+, beta) | `.base` files — `dashboard.base` data views. If on an older Obsidian or if Bases is disabled: Settings → Core plugins → enable **Bases** |
+| **Mermaid** | Native markdown support | ```` ```mermaid ```` code blocks embedded in wiki concept pages |
+| **MathJax / LaTeX** | Native markdown support | `$…$` inline and `$$…$$` block math in concept pages |
+
+### Rendering Enhancers (recommended — install via Browse)
+
+These improve the visual quality of the `atlas/` and `wiki/` layers beyond default Obsidian rendering:
+
+| Plugin | Why install |
+|---|---|
+| **Style Settings** | Required dependency for most good themes (Minimal, Things, Blue Topaz). Exposes granular CSS variables (font size, spacing, callout colours) for customisation |
+| **Iconize** (previously *Icon Folder*) | Adds icons to files/folders — makes domain trees much easier to scan visually (e.g. 📘 on `wiki/concepts/academic/`, 🧪 on `science/`) |
+| **Advanced Tables** | Auto-formats and navigates large markdown tables. The `vocab/` and `expressions/` pages rely on tables — editing them without this plugin is painful |
+| **Image Toolkit** | Click-to-zoom for images and mermaid/excalidraw previews. Useful when atlas diagrams get dense |
+| **Highlightr** | Multi-colour highlights (beyond the default `==yellow==`). Useful when colour-coding vocab by confidence or concept type |
+
+### Productivity Plugins (optional)
+
+Not strictly about rendering, but fit this knowledge base's workflow:
+
+| Plugin | Why |
+|---|---|
+| **Dataview** | Query wiki frontmatter (tags, domain, updated) in inline tables. Alternative to Bases on older Obsidian versions |
+| **Templater** | Template engine — useful if you ever create concept pages manually instead of via Claude |
+| **Tag Wrangler** | Rename, merge, or browse tags across the whole vault (the KB accumulates many tags over time) |
+| **Outliner** | Smoother editing of the domain tree bullet list in CLAUDE.md |
+| **Linter** | Auto-format markdown on save (trailing whitespace, heading spacing, YAML frontmatter) |
+
+### Theme
+
+The default Obsidian theme works fine, but for noticeably better readability on long concept pages:
+
+- **Minimal** (by kepano) — clean, typography-focused. Pair with **Style Settings** for fine-tuning
+- **Things** — softer colours, good for atlas browsing
+
+Apply via **Settings → Appearance → Themes → Manage → Browse**.
+
+---
+
 ## Dependencies
 
 ### Claude Code Skills
@@ -266,7 +335,7 @@ llm-knowledge-skill/
 |---|---|---|
 | File read/write | Claude Code built-in | Yes |
 | Web ingestion | Claude Code built-in web_fetch | Yes |
-| Obsidian visualization | Obsidian + Excalidraw plugin | Yes (human layer) |
+| Obsidian visualization | Obsidian + Excalidraw plugin (see [Obsidian Plugins](#obsidian-plugins)) | Yes (human layer) |
 | GitHub repo ingestion | GitHub MCP | Optional |
 | PDF text extraction | pdftotext / pymupdf | Optional |
 | YouTube subtitles | yt-dlp | Optional |

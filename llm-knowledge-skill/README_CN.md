@@ -114,9 +114,9 @@ cp /path/to/templates/_custom/CLAUDE.md ./CLAUDE.md
 
 ### 第四步：设置 Obsidian
 
-在 Obsidian 中：**Open folder as vault** → 选择知识库目录
+在 Obsidian 中：**Open folder as vault** → 选择知识库目录。
 
-安装 Obsidian 插件：**Excalidraw**（Canvas 和 Bases 自 Obsidian 1.8+ 起内置）
+安装所需插件（详见下方 [Obsidian 插件](#obsidian-插件) 小节）。最关键的是安装 **Excalidraw** 社区插件 —— 不装的话 `.excalidraw` 文件只会显示成一堆 JSON 原文。
 
 ### 第五步：初始化并开始使用
 
@@ -166,7 +166,7 @@ cp llm-knowledge/SKILL.md ~/my-knowledge-base/SKILL.md
 
 ### 第四步：设置 Obsidian
 
-与 Claude Code 相同：将知识库目录作为 Obsidian vault 打开，安装 Excalidraw 插件。
+与 Claude Code 路径相同：将知识库目录作为 Obsidian vault 打开，并按下方 [Obsidian 插件](#obsidian-插件) 小节安装插件。
 
 ### 第五步：初始化并开始使用
 
@@ -248,6 +248,75 @@ llm-knowledge-skill/
 
 ---
 
+## Obsidian 插件
+
+`atlas/` 层生成的文件依赖 Obsidian 插件渲染。不装的话，部分文件只会显示原始 JSON 或纯文本。
+
+### 先关闭安全模式（Restricted Mode）
+
+Obsidian 默认开启 **安全模式 / Restricted Mode**，社区插件市场和已安装插件都不可用。必须先关闭：
+
+1. Obsidian → **Settings（⚙️）** → **Community plugins（第三方插件）**
+2. 点击 **Turn on community plugins**（新版为 **Turn off Restricted Mode / 关闭安全模式**）
+3. 弹出安全警告 → 确认继续
+4. **Browse（浏览）** 按钮被激活，即可进入第三方插件市场
+
+### 必装
+
+**Excalidraw**（社区插件，作者 Zsolt Viczián）
+
+渲染 `.excalidraw` 文件（概念关系图、可视化周期表等）必须装。不装就是一坨 JSON 原文。
+
+安装步骤：
+1. **Community plugins** → **Browse** → 搜索 `Excalidraw` → **Install** → **Enable**
+2.（可选，推荐）命令面板执行 `Excalidraw: Convert *.excalidraw files to *.excalidraw.md` —— 把文件包装为 markdown 容器，wikilink、frontmatter、搜索才能正常工作。
+
+装不了的备选：打开 [excalidraw.com](https://excalidraw.com)，用 **Open** 载入 `.excalidraw` 文件。只能只读浏览，无法在 Obsidian 里跳转。
+
+### 内置（无需安装）
+
+| 插件 | 状态 | 渲染的内容 |
+|---|---|---|
+| **Canvas** | 核心插件（Obsidian 1.1+，默认开启） | `.canvas` 文件 —— `_map.canvas` 领域地图、`overview.canvas` 鸟瞰图 |
+| **Bases** | 核心插件（Obsidian 1.9+，Beta） | `.base` 文件 —— `dashboard.base` 数据视图。若 Obsidian 版本较老或 Bases 被禁用：Settings → Core plugins → 启用 **Bases** |
+| **Mermaid** | 原生 markdown 支持 | 嵌入 wiki 概念页的 ```` ```mermaid ```` 代码块 |
+| **MathJax / LaTeX** | 原生 markdown 支持 | 概念页里的 `$…$` 行内公式和 `$$…$$` 块公式 |
+
+### 渲染增强（推荐，Browse 安装）
+
+这些插件能显著提升 `atlas/` 和 `wiki/` 的视觉效果，超越 Obsidian 默认渲染：
+
+| 插件 | 为什么装 |
+|---|---|
+| **Style Settings** | 绝大多数优秀主题（Minimal、Things、Blue Topaz）的前置依赖。暴露细粒度 CSS 变量（字体大小、间距、callout 颜色）可调 |
+| **Iconize**（原名 *Icon Folder*） | 给文件/文件夹加图标 —— 让 domain 树一眼能扫（比如 📘 挂在 `wiki/concepts/academic/`、🧪 挂在 `science/`） |
+| **Advanced Tables** | 自动格式化 + 快捷键导航大 markdown 表。`vocab/` 和 `expressions/` 页面大量依赖表格，没这个插件编辑起来很痛苦 |
+| **Image Toolkit** | 图片、mermaid / excalidraw 预览点击放大。atlas 图密时很有用 |
+| **Highlightr** | 支持多色高亮（不止默认 `==黄色==`）。按单词掌握度或概念类型分色很好用 |
+
+### 生产力插件（可选）
+
+严格来说不属于"渲染"，但契合本知识库的使用流：
+
+| 插件 | 作用 |
+|---|---|
+| **Dataview** | 按 frontmatter（tags、domain、updated）查询 wiki 生成内联表格。老版本 Obsidian 上可替代 Bases |
+| **Templater** | 模板引擎 —— 自己手动建概念页时有用（不通过 Claude） |
+| **Tag Wrangler** | 重命名、合并、浏览 vault 内所有 tag（长期积累会有很多 tag） |
+| **Outliner** | 让 CLAUDE.md 里的 domain 树缩进列表编辑更顺手 |
+| **Linter** | 保存时自动格式化 markdown（尾部空白、标题间距、YAML frontmatter） |
+
+### 主题
+
+默认主题够用，但长概念页的可读性可以更好：
+
+- **Minimal**（作者 kepano）—— 简洁、排版导向，配合 **Style Settings** 可精调
+- **Things** —— 柔和配色，适合 atlas 浏览
+
+通过 **Settings → Appearance → Themes → Manage → Browse** 安装。
+
+---
+
 ## 依赖清单
 
 ### Claude Code Skills
@@ -267,7 +336,7 @@ llm-knowledge-skill/
 |---|---|---|
 | 文件读写 | Claude Code 内置 | Yes |
 | 网页摄入 | Claude Code 内置 web_fetch | Yes |
-| Obsidian 可视化 | Obsidian + Excalidraw 插件 | Yes（人类阅读层） |
+| Obsidian 可视化 | Obsidian + Excalidraw 插件（详见 [Obsidian 插件](#obsidian-插件)） | Yes（人类阅读层） |
 | GitHub 仓库摄入 | GitHub MCP | Optional |
 | PDF 文本提取 | pdftotext / pymupdf | Optional |
 | YouTube 字幕 | yt-dlp | Optional |
