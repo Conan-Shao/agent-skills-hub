@@ -56,16 +56,32 @@ L3: Topic（主题）     → 概念页文件名（不建子目录）
 
 ---
 
-## 快速开始
+## 快速开始 — Claude Code
 
-### 第一步：安装可视化 Skills（必须）
+### 第一步：安装依赖 Skills
 
+**可视化 Skills（推荐）：**
 ```bash
 git clone https://github.com/axtonliu/axton-obsidian-visual-skills.git
 cp -r axton-obsidian-visual-skills/excalidraw-diagram ~/.claude/skills/
 cp -r axton-obsidian-visual-skills/mermaid-visualizer ~/.claude/skills/
 cp -r axton-obsidian-visual-skills/obsidian-canvas-creator ~/.claude/skills/
 ```
+
+**Obsidian Markdown & Bases（推荐）：**
+```bash
+git clone https://github.com/kepano/obsidian-skills.git
+cp -r obsidian-skills/skills/obsidian-markdown ~/.claude/skills/
+cp -r obsidian-skills/skills/obsidian-bases ~/.claude/skills/
+```
+
+**Tutor Skills（可选，用于备考模式）：**
+```bash
+git clone https://github.com/bevibing/tutor-skills.git
+cp -r tutor-skills/skills/tutor ~/.claude/skills/
+```
+
+> 所有依赖 Skills 均为**推荐但非必须**。核心 SKILL.md 已内联所有格式规范，不安装任何外部 Skill 也能正常工作。
 
 ### 第二步：安装本 Skill
 
@@ -100,7 +116,7 @@ cp /path/to/templates/_custom/CLAUDE.md ./CLAUDE.md
 
 在 Obsidian 中：**Open folder as vault** → 选择知识库目录
 
-安装 Obsidian 插件：**Excalidraw**（Canvas 是内置的）
+安装 Obsidian 插件：**Excalidraw**（Canvas 和 Bases 自 Obsidian 1.8+ 起内置）
 
 ### 第五步：初始化并开始使用
 
@@ -108,6 +124,53 @@ cp /path/to/templates/_custom/CLAUDE.md ./CLAUDE.md
 初始化知识库
 摄入 https://你的第一个URL
 ```
+
+---
+
+## 快速开始 — OpenClawd / 其他 Agent
+
+适用于不支持 Claude Code `~/.claude/skills/` 目录的 Agent（OpenClawd、自定义 LLM Agent 等）：
+
+### 第一步：创建知识库
+
+```bash
+mkdir ~/my-knowledge-base && cd ~/my-knowledge-base
+
+# 复制模板作为配置
+cp /path/to/templates/tech-engineer/CLAUDE.md ./CLAUDE.md
+```
+
+### 第二步：加载 SKILL.md 到 Agent
+
+**方案 A — 写入 System Prompt（推荐）：**
+将 `llm-knowledge/SKILL.md` 的完整内容粘贴到 Agent 的 system prompt 或上下文窗口。
+
+**方案 B — 文件加载：**
+如果 Agent 能读取本地文件，将 SKILL.md 放到知识库根目录：
+```bash
+cp llm-knowledge/SKILL.md ~/my-knowledge-base/SKILL.md
+```
+然后指示 Agent 启动时读取。
+
+### 第三步：依赖 Skills 处理
+
+外部 `@skill` 调用（如 `@obsidian-canvas-creator`）在 Claude Code 之外无法工作。SKILL.md 已内联降级规范：
+
+| 功能 | 处理方式 |
+|---|---|
+| wiki/（概念页、索引、日志） | 完整支持——纯 markdown 读写 |
+| Mermaid 图表 | 支持——Agent 直接写 mermaid 代码块 |
+| Canvas（_map.canvas） | Agent 按 SKILL.md 中的规范直接写 Canvas JSON |
+| Excalidraw 关系图 | 跳过——仅生成 wiki 文字，后续在 Claude Code 中补充 |
+| Obsidian Bases（dashboard.base） | 跳过——使用 wiki/index.md 导航 |
+
+### 第四步：设置 Obsidian
+
+与 Claude Code 相同：将知识库目录作为 Obsidian vault 打开，安装 Excalidraw 插件。
+
+### 第五步：初始化并开始使用
+
+告诉 Agent：`初始化知识库`
 
 ---
 
@@ -187,13 +250,23 @@ llm-knowledge-skill/
 
 ## 依赖清单
 
-| 功能 | 依赖 | 必须 |
+### Claude Code Skills
+
+| Skill | 来源 | 级别 | 降级策略 |
+|---|---|---|---|
+| obsidian-canvas-creator | [axtonliu/axton-obsidian-visual-skills](https://github.com/axtonliu/axton-obsidian-visual-skills) | 推荐 | 按规范手写 Canvas JSON |
+| excalidraw-diagram | [axtonliu/axton-obsidian-visual-skills](https://github.com/axtonliu/axton-obsidian-visual-skills) | 推荐 | 跳过，仅保留 wiki 文字 |
+| mermaid-visualizer | [axtonliu/axton-obsidian-visual-skills](https://github.com/axtonliu/axton-obsidian-visual-skills) | 推荐 | 按规范手写 mermaid 语法 |
+| obsidian-markdown | [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) | 推荐 | 按 SKILL.md 内联规范手写 |
+| obsidian-bases | [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) | 可选 | 不生成 dashboard.base，用 index.md |
+| tutor | [bevibing/tutor-skills](https://github.com/bevibing/tutor-skills) | 可选 | 内置 Exam 模式（无交互追踪） |
+
+### 运行时工具
+
+| 功能 | 工具 | 必须 |
 |---|---|---|
 | 文件读写 | Claude Code 内置 | Yes |
 | 网页摄入 | Claude Code 内置 web_fetch | Yes |
-| Canvas 思维导图 | Axton obsidian-canvas-creator | Yes |
-| Excalidraw 关系图 | Axton excalidraw-diagram | Yes |
-| Mermaid 流程图 | Axton mermaid-visualizer | Yes |
 | Obsidian 可视化 | Obsidian + Excalidraw 插件 | Yes（人类阅读层） |
 | GitHub 仓库摄入 | GitHub MCP | Optional |
 | PDF 文本提取 | pdftotext / pymupdf | Optional |
@@ -207,3 +280,5 @@ llm-knowledge-skill/
 
 - 方法论：Andrej Karpathy，LLM Wiki（2026-04-03）
 - 可视化 Skills：[axtonliu/axton-obsidian-visual-skills](https://github.com/axtonliu/axton-obsidian-visual-skills)
+- Obsidian Skills：[kepano/obsidian-skills](https://github.com/kepano/obsidian-skills)
+- Tutor Skills：[bevibing/tutor-skills](https://github.com/bevibing/tutor-skills)

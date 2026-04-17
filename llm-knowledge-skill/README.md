@@ -55,7 +55,7 @@ You can add or reorganize domains anytime by talking to Claude.
 
 ---
 
-## Quick Start
+## Quick Start — Claude Code
 
 ### Step 1: Install Dependency Skills
 
@@ -123,6 +123,53 @@ Install Obsidian plugins: **Excalidraw** (Canvas and Bases are built-in since Ob
 初始化知识库
 摄入 https://your-first-url
 ```
+
+---
+
+## Quick Start — OpenClawd / Other Agents
+
+For agents that don't support Claude Code's `~/.claude/skills/` directory (OpenClawd, custom LLM agents, etc.):
+
+### Step 1: Set Up the Knowledge Base
+
+```bash
+mkdir ~/my-knowledge-base && cd ~/my-knowledge-base
+
+# Copy a template as your config
+cp /path/to/templates/tech-engineer/CLAUDE.md ./CLAUDE.md
+```
+
+### Step 2: Load SKILL.md into the Agent
+
+**Option A — System prompt (recommended):**
+Copy the full content of `llm-knowledge/SKILL.md` into the agent's system prompt or context window.
+
+**Option B — File-based loading:**
+If the agent can read local files, place SKILL.md in the knowledge base root:
+```bash
+cp llm-knowledge/SKILL.md ~/my-knowledge-base/SKILL.md
+```
+Then instruct the agent to read it on startup.
+
+### Step 3: Dependency Skills Handling
+
+External `@skill` calls (e.g. `@obsidian-canvas-creator`) won't work outside Claude Code. SKILL.md includes inline fallback specs, so:
+
+| Feature | What happens |
+|---|---|
+| wiki/ (concept pages, index, log) | Works fully — plain markdown read/write |
+| Mermaid diagrams | Works — agent writes mermaid code blocks directly |
+| Canvas (_map.canvas) | Agent writes Canvas JSON directly using spec in SKILL.md |
+| Excalidraw diagrams | Skipped — generate wiki text only, add diagrams later in Claude Code |
+| Obsidian Bases (dashboard.base) | Skipped — use wiki/index.md for navigation |
+
+### Step 4: Set Up Obsidian
+
+Same as Claude Code: open the knowledge base folder as an Obsidian vault, install the Excalidraw plugin.
+
+### Step 5: Initialize and Start Using
+
+Tell the agent: `初始化知识库` or `Initialize the knowledge base`
 
 ---
 
