@@ -39,8 +39,10 @@
 ## Domain 配置
 
 - academic/ — 学业
-  - vocab/ — 学术词汇（按科目积累，跨科目复习）
-    - maths, science, history, geography, english, french, cs
+  - vocab/ — 学术词汇（按学科分文件，含音标+中文）
+    - chemistry, physics, biology, maths, history, geography, english, french, cs
+  - expressions/ — 课堂常用表达（按学科分文件，提问/回答/实验/写作）
+    - chemistry, physics, maths, general
   - maths/ — Algebra, Geometry, Statistics, Probability
   - science/ — Physics, Chemistry, Biology
   - english/ — Literature, Writing, Grammar
@@ -107,25 +109,48 @@ visual:
 
 ## 词汇页模板（vocab 专用）
 
+每个学科一个文件，按 topic 分组。每条词汇必须包含音标和中文。
+
 ```markdown
 ---
 title: <Subject> Vocabulary
 domain: academic/vocab
 updated:
-tags: []
+tags: [vocab, <subject>]
 ---
 
-## This Week's New Words
+## <Topic Group>
 
-| Term | Meaning | Example Sentence | Topic |
-|---|---|---|---|
-| | | | |
+| Term | Phonetics | Chinese | Meaning | Example Sentence |
+|---|---|---|---|---|
+| | /.../ | | | |
 
 ## Words to Review
 
-| Term | Meaning | Last Reviewed | Confidence |
+| Term | Chinese | Last Reviewed | Confidence |
 |---|---|---|---|
 | | | | ★☆☆ / ★★☆ / ★★★ |
+```
+
+---
+
+## 表达页模板（expressions 专用）
+
+每个学科一个文件，按场景分组（提问、回答、实验、写作等）。
+
+```markdown
+---
+title: <Subject> — Classroom Expressions
+domain: academic/expressions
+updated:
+tags: [expressions, <subject>]
+---
+
+## <场景>
+
+| Scenario | English Expression | 中文对照 |
+|---|---|---|
+| | | |
 ```
 
 ---
@@ -148,7 +173,9 @@ tags: []
 课堂笔记：手机拍照上传，Claude Vision 识别整理
 
 摄入时额外提取：考试常见题型、易混淆点、记忆技巧
-摄入任何科目内容时：自动提取学术词汇 → 追加到 wiki/concepts/academic/vocab/ 对应科目页
+摄入任何科目内容时：
+- 自动提取学术词汇（含音标+中文）→ 追加到 vocab/<subject>.md
+- 识别该科目常用课堂表达 → 追加到 expressions/<subject>.md
 
 ---
 
@@ -162,8 +189,13 @@ tags: []
 - 解释某个概念后，如 wiki 中没有该页面 → 自动创建概念页（下次不用再解释）
 
 **词汇积累**：
-- 每次摄入或解答问题时，自动识别学术词汇 → 追加到 vocab/ 对应科目页
+- 每次摄入或解答问题时，自动识别学术词汇（含音标+中文）→ 追加到 vocab/<subject>.md
 - 「备考 vocab」→ 生成跨科目词汇卡片和测试题
+- 「备考 vocab chemistry」→ 生成单科词汇卡片
+
+**表达积累**：
+- 摄入课堂材料时，识别常用提问/回答模式 → 追加到 expressions/<subject>.md
+- 包含：课堂提问、讨论回答、实验操作、实验报告写作等场景
 
 ---
 
