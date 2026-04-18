@@ -119,6 +119,11 @@ Install the required plugins (see the [Obsidian Plugins](#obsidian-plugins) sect
 
 ### Step 5: Initialize and Start Using
 
+> **Important — start a new session first.**
+> After copying CLAUDE.md, the `@llm-knowledge` skill is not yet loaded in your current session. Close Claude Code and reopen it in the knowledge base directory so the skill is auto-loaded from CLAUDE.md.
+>
+> Do **not** invoke the skill via `/llm-knowledge` or the Skill tool — it is a local skill, not a marketplace plugin.
+
 ```
 初始化知识库
 摄入 https://your-first-url
