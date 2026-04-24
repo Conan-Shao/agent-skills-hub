@@ -214,6 +214,13 @@ Patterns · Proportion · Quadratics
 - `type: "text"` 中的 wikilink 必须指向**已存在的文件**，否则 Obsidian 会自动创建垃圾空文件
 - 每个 canvas 都必须有一个 `type: "text"` 的标题节点（内容 `# 标题`，置顶，横跨全宽）
 
+**Canvas 布局建议**（软性指导，不强制）：
+
+- 学科 L2 map 建议使用网格布局、file 节点等宽；参考同 vault 中其他已有 `atlas/<L1>/<L2>/_map.canvas` 作为模板
+- Hub 级别 overview canvas 可以使用更大的 text 节点、自由布局
+- 兴趣 / 参考资料领域允许更大的卡片尺寸容纳描述文字
+- **不要在 skill 或 CLAUDE.md 中固定像素值** —— 让每个 canvas 根据内容特征选择合适的卡片尺寸
+
 ---
 
 ## 操作集
@@ -260,6 +267,7 @@ Patterns · Proportion · Quadratics
 
 **C. 写 wiki/**：
 - 按 `{{concept_format}}` 新建或更新 wiki/concepts/<L1>/<L2>/<topic>.md
+- **新建或更新页面时，`updated:` 字段必须写入当日日期（YYYY-MM-DD）** —— Lint 的 grace-period 规则依赖此字段准确反映最后修改时间
 - 概念页底部加 `Part of [[L2-hub-name]]`（建立图谱向上链接）
 - 使用 Obsidian Markdown 增强格式（参见下方「Obsidian Markdown 规范」）
 - 若有流程/步骤 → 调用 `@mermaid-visualizer`，嵌入 mermaid 代码块
@@ -293,8 +301,28 @@ Patterns · Proportion · Quadratics
 2. 检查 `[[wikilinks]]`：所有链接目标文件是否存在，不存在则报告（防止 Obsidian 自动创建垃圾文件）
 3. 检查 atlas/ Canvas 节点是否都有对应 wiki 页（清理无效链接）
 4. 验证 CLAUDE.md domain 树与实际目录结构一致
-5. 自动修复可确定问题，列出需人工确认的矛盾
-6. 追加 log.md
+
+5. **Frontmatter 校验**：
+   - 必需字段存在：`title`、`domain`、`updated`、`tags`（`tags` 允许空列表 `[]`）
+   - `title`、`domain`、`updated` 必须非空；`updated` 为合法 `YYYY-MM-DD` 日期
+   - `domain` 必须匹配 CLAUDE.md 中定义的 domain 树
+   - `related:` 规范化形式为**裸 YAML 列表**：`related: [concept-a, concept-b]`
+     - **错误级别**：`related: [[x, y]]`（双括号+逗号，YAML 解析成嵌套列表，非预期形式）
+     - **警告级别**（建议简化，不强制）：`related: ["[[x]]", "[[y]]"]`
+
+6. **章节数合理性检查**：
+   - 概念页 `##` 一级章节少于 3 个 → **警告**（"页面可能是 stub"），**hub 文件豁免**
+   - Hub 文件定义：文件名（去扩展名）等于父目录名，或等于父目录名去掉前缀 `NN-` 后的部分
+     - 例：`academic/academic.md`、`maths/maths.md`、`01-patterns/patterns.md` 均为 hub
+   - 概念页 `##` 一级章节 ≥ 10 个 → info 级提示（"页面可能过长，考虑拆分"）
+
+7. **`## My Notes` 死代码检查**：
+   - 任意页面含 `## My Notes`（任意层级），且该节只有 HTML 注释或空白 → 警告
+   - **宽限期**：`updated` 日期早于 2026-04-22 的文件豁免该警告（让既有旧页自然迭代清理）
+   - 警告文案：「可直接删除该段落，仍然可以手工编辑该文件」
+
+8. 自动修复可确定问题，列出需人工确认的矛盾
+9. 追加 log.md
 
 ---
 
@@ -412,7 +440,7 @@ visual:
 
 | 占位符 | 默认值 | 说明 |
 |---|---|---|
-| `{{language_style}}` | neutral | neutral / technical / student-friendly |
+| `{{language_style}}` | neutral | neutral / technical / student-friendly / bilingual-en-cn-student |
 | `{{concept_format}}` | standard | standard / technical / exam-oriented |
 | `{{mode}}` | research | research / study / 可组合如 research+study |
 | `{{visual_auto}}` | true | true=自动判断 / false=仅明确要求时生成 |

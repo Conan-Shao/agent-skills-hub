@@ -17,7 +17,7 @@
 ## Skill 配置
 
 ```
-{{language_style}}      = student-friendly
+{{language_style}}      = bilingual-en-cn-student
 {{mode}}                = research+study
 {{visual_auto}}         = true
 {{concept_format}}      = exam-oriented
@@ -27,12 +27,30 @@
 
 ## 语言风格（最重要）
 
-- **全英文输出**（与国际学校课堂语言一致）
-- 用 13 岁学生能理解的日常语言
-- 专业词汇立刻在括号里解释：`photosynthesis (how plants make food from sunlight)`
-- 多用类比和生活例子
-- 语气友好鼓励，**绝不使用「这很简单」「这是基础」**
+### 主体 Main content
+- **英文为主** — 学术语言与国际学校课堂一致
+- 用 13 岁学生能理解的日常词汇，多用类比和生活例子
+- 语气友好鼓励，**绝不使用**「这很简单」「这是基础」
 - 步骤说明用 numbered list
+
+### 双语穿插 Bilingual sprinkles
+- **章节标题双语**: `## 📐 经纬线 Latitude & Longitude`
+- **关键术语第一次出现**时在括号里中文注解:
+  `photosynthesis (光合作用) — how plants make food from sunlight`
+- **关键理解点后**加 `> [!note] 中文速记` callout（1–2 句中文总结）
+- **Memory tricks** 可以用纯中文口诀（押韵/对仗更好记）
+- **Vocabulary 表格**含音标 + 中文（见概念页模板章节）
+
+### Callout 示例
+
+```markdown
+$$V = IR$$
+
+Voltage equals current times resistance — the cornerstone of electricity.
+
+> [!note] 中文速记
+> **V = IR**。电压 = 电流 × 电阻。这是整个电学最重要的公式。
+```
 
 ---
 
@@ -68,42 +86,59 @@
 
 ---
 
-## 概念页模板（exam-oriented 格式）
+## 概念页模板（exam-oriented, bilingual 格式）
+
+### 必需 Mandatory — 每个概念页都要有
 
 ```markdown
 ---
-title:
+title: "{Concept} — {中文名}"
 domain: <L1>/<L2>
-updated:
-sources: []
+updated: YYYY-MM-DD
 tags: []
-related: []
-visual:
-  excalidraw:
-  mermaid:
+related: [other-concept-a, other-concept-b]   # bare YAML list; 不要用 [[x, y]] 双括号逗号形式
 ---
 
-## What is it?
-<!-- One clear sentence in plain English -->
+# {emoji} {Concept} — {中文名}
 
-## Why does it matter? / Where do you see it?
-<!-- Relatable real-life example or analogy -->
+## 1. Definition
+<!-- 一句话英文定义。紧接着加 > [!note] 中文速记 callout (1-2 句中文总结) -->
 
-## Key Points (Exam Essentials)
-- ...
-- ...
+## 2. Why it matters
+<!-- 真实生活例子，或 Year 8 学生为什么要关心这个 -->
 
-## Common Mistakes to Avoid
-<!-- What students often get wrong -->
+## 3. Key Concepts
+<!-- 主体内容 — 按需要用 3.1 / 3.2 / 3.3 等子小节
+     通常包含段落、表格、公式、示意图 -->
 
-## Memory Trick
-<!-- Mnemonic, acronym, or visual trick -->
+## Connections
+<!-- Bulleted [[wikilinks]] 到相关概念页 -->
 
-## Worked Example
-<!-- Sample question + step-by-step solution -->
-
-## Related
+Part of [[<L2-hub>]]
 ```
+
+### 可选 Recommended — 按学科性质选用
+
+| 章节 | 何时使用 |
+|---|---|
+| `## 4. Worked Example(s)` | maths / physics / CS — 带步骤的解题示例 |
+| `## 5. Common Mistakes` | 任何学科 — 用 `> [!warning]` callout |
+| `## 6. Memory Tricks` | 任何学科 — 一两句口诀，可以用纯中文 |
+| `## Vocabulary` | academic 学科 — 音标 + 中文双语词汇表 |
+
+### Vocabulary 表格格式
+
+```markdown
+## Vocabulary
+
+| Term | Phonetics | 中文 | Meaning |
+|---|---|---|---|
+| photosynthesis | /ˌfəʊ.təʊˈsɪn.θə.sɪs/ | 光合作用 | How plants make food from sunlight |
+```
+
+### 不再加入 Removed from template
+
+- ❌ `## My Notes` — 移出模板。已有的页面继续可用，但新页不再自动包含这一节。
 
 ---
 
@@ -162,6 +197,12 @@ tags: [expressions, <subject>]
 - **Canvas**：每个科目和单元各一张地图，是导航的主入口
 
 **视觉优先原则**：凡是「关系」「结构」「流程」类的概念，优先生成可视化。
+
+### Canvas 布局建议
+- 学科 L2 map 参考同 vault 中已有的 `atlas/<L1>/<L2>/_map.canvas`，保持同一个 map 内的卡片尺寸一致
+- 不同 map 之间的卡片尺寸允许不同（hub 可以大一点，子学科小一点）
+- 优先 4 卡一行；超过 4 卡时换行，不要挤在一行
+- **不固定像素值** — 根据内容特征选择合适尺寸
 
 ---
 
