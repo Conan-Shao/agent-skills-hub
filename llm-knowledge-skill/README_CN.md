@@ -1,25 +1,28 @@
 # LLM Knowledge Skill
 
 基于 Karpathy LLM Wiki 方法论的个人知识库工具包，由 Claude Code 驱动。
-扩展双层架构 + 可视化技能集成。
+扩展多层架构 + 可视化技能集成。
 
 **核心理念：知识库跟人走，不跟角色或项目走。** 从一个匹配当前阶段的模板出发，随兴趣和成长持续扩展。
 
 ---
 
-## 双层架构
+## 架构（5 层）
 
 ```
-同一份 raw/ 原始资料
-        ↓
-  LLM 编译为两层
-        ↓
-wiki/   ← AI 查询层（平铺 Markdown，token 友好，供 LLM 检索）
-atlas/  ← 人类阅读层（Canvas + Excalidraw + Mermaid，Obsidian 可视化浏览）
+源料                                产物
+─────                               ────
+raw/      手动一次性摄入       ┐
+                              ├──► wiki/   ← AI 查询层
+stream/   外部自动化周期推送   ┘    atlas/  ← 人类阅读层
+                                   output/ ← 查询结果与备考产物
 ```
 
-- **wiki/** 对 AI 优化：平铺结构，index.md 导航，适合 LLM 高效 Read
-- **atlas/** 对人优化：层级目录，Canvas 思维导图可点击跳转，Excalidraw 关系图帮助理解
+- **raw/** — 手动一次性摄入（URL、PDF、截图）。摄入后 LLM 只读。
+- **stream/** — *可选层*。外部自动化周期推送的内容（每日简报、每周 digest、inbox）。LLM 只读。
+- **wiki/** — AI 查询层。平铺 Markdown，token 友好，含 index.md 导航。
+- **atlas/** — 人类阅读层。Canvas / Excalidraw / Mermaid / Bases 可视化浏览。**不服务 stream/**。
+- **output/** — 查询结果与 study 模式产物（备考包、掌握度追踪）。
 
 ---
 
@@ -185,6 +188,26 @@ cp llm-knowledge/SKILL.md ~/my-knowledge-base/SKILL.md
 | **Map** | 「map \<领域\>」 | 重新生成领域 Canvas |
 | **Domain** | 「添加分类 \<名称\>」 | 新增/调整 domain 树 |
 | **Exam** | 「备考 \<科目\> \<日期\>」 | study 模式：复习清单、卡片、模拟题 |
+
+---
+
+## 知识库目录契约（Vault Contract）
+
+安装本 skill 后，宿主 vault 期望具备以下顶层结构：
+
+```
+<vault-root>/
+├── CLAUDE.md     ← 个人配置（domain 树、stream 子类型、偏好）
+├── raw/          ← 手动一次性摄入的源料（LLM 只读）
+├── stream/       ← 可选：外部自动化周期推送的源料（LLM 只读）
+├── wiki/         ← AI 查询层（LLM 在此写入）
+├── atlas/        ← 人类可视化层（LLM 在此写入）
+└── output/       ← 查询结果与备考产物
+```
+
+**stream/ 是可选层。** 若 CLAUDE.md 未声明「Stream 配置」，skill 会跳过 stream 创建和 Lint 的 stream 检查。当你有外部自动化(cron、定时 agent、每日/每周 digest 等)向知识库推送内容时，在 CLAUDE.md 中声明 stream 子类型。
+
+`Init` 操作根据 CLAUDE.md 创建目录结构，`Lint` 操作验证实际目录与 CLAUDE.md 声明一致。
 
 ---
 

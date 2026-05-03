@@ -1,24 +1,27 @@
 # LLM Knowledge Skill
 
-A personal knowledge base toolkit powered by Claude Code. Based on the Karpathy LLM Wiki methodology, extended with a dual-layer architecture and visual skills integration.
+A personal knowledge base toolkit powered by Claude Code. Based on the Karpathy LLM Wiki methodology, extended with a multi-layer architecture and visual skills integration.
 
 **Core philosophy: your knowledge base follows you, not your role or project.** It starts from a template matching your current stage, then grows with your interests and career over time.
 
 ---
 
-## Dual-Layer Architecture
+## Architecture (5 layers)
 
 ```
-Same raw/ source material
-        ↓
-  LLM compiles into two layers
-        ↓
-wiki/   ← AI query layer (flat Markdown, token-friendly, for LLM retrieval)
-atlas/  ← Human reading layer (Canvas + Excalidraw + Mermaid, visual browsing in Obsidian)
+Sources                            Products
+─────────                          ────────
+raw/      manual ingestion    ┐
+                              ├──► wiki/   ← AI query layer
+stream/   automated push      ┘    atlas/  ← Human reading layer
+                                   output/ ← Query results & exam artifacts
 ```
 
-- **wiki/** optimized for AI: flat structure, index.md navigation, efficient for LLM Read
-- **atlas/** optimized for humans: hierarchical directories, clickable Canvas mind maps, Excalidraw diagrams
+- **raw/** — manual one-shot ingestion (URLs, PDFs, screenshots). LLM read-only after ingest.
+- **stream/** — *optional layer*. Externally pushed periodic content (daily briefs, weekly digests, inbox). LLM read-only.
+- **wiki/** — AI query layer. Flat Markdown, token-friendly, with index.md navigation.
+- **atlas/** — Human reading layer. Canvas / Excalidraw / Mermaid / Bases for visual browsing. Does not serve stream/.
+- **output/** — Query results and study-mode artifacts (exam packages, progress tracking).
 
 ---
 
@@ -189,6 +192,26 @@ Tell the agent: `初始化知识库` or `Initialize the knowledge base`
 | **Map** | "map \<domain\>" | Regenerate domain canvas from wiki content |
 | **Domain** | "add domain \<name\>" / "添加分类 \<name\>" | Add/reorganize domain tree |
 | **Exam** | "备考 \<subject\> \<date\>" | Study mode: revision list, flashcards, mock exam |
+
+---
+
+## Vault Contract
+
+After installing this skill, the host vault is expected to have this top-level structure:
+
+```
+<vault-root>/
+├── CLAUDE.md     ← personal config (domain tree, stream subtypes, preferences)
+├── raw/          ← manual ingestion sources (LLM read-only)
+├── stream/       ← optional: automated periodic push sources (LLM read-only)
+├── wiki/         ← AI query layer (LLM writes here)
+├── atlas/        ← human visualization layer (LLM writes here)
+└── output/       ← query results and exam artifacts
+```
+
+**stream/ is optional.** If your CLAUDE.md does not declare a Stream Configuration section, the skill skips stream creation and Lint stream checks. Add stream subtypes to your CLAUDE.md if you have external automation pushing periodic content (cron jobs, scheduled agents, daily/weekly digests).
+
+The `Init` operation creates the layout based on CLAUDE.md. The `Lint` operation validates that the actual layout matches what CLAUDE.md declares.
 
 ---
 

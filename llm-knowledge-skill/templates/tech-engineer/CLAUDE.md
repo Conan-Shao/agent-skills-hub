@@ -61,6 +61,23 @@
 
 ---
 
+## Stream 配置
+
+stream 子类型（本场景示例，可按需增删）：
+
+- `briefs/` — 每日技术简报、新闻摘要
+- `digests/` — 周报 / 月报
+- `inbox/` — 待整理的零散 stream 内容
+
+文件命名：
+- 日级：`YYYY-MM-DD.md`（briefs / inbox）
+- 周级：`YYYY-Www.md`（digests）
+
+stream 文件由外部自动化任务生成，LLM 只读、可沉淀到 wiki/，不修改原文。
+执行 `整理 stream` 或 `整理 inbox` 触发沉淀流程（详见 SKILL.md 的 Ingest Stream 变体）。
+
+---
+
 ## 概念页模板（technical 格式）
 
 ```markdown
